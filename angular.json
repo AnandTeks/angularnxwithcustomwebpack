@@ -1,6 +1,165 @@
 {
   "version": 1,
   "projects": {
+    "profile": {
+      "projectType": "application",
+      "root": "apps/profile",
+      "sourceRoot": "apps/profile/src",
+      "prefix": "myorg",
+      "architect": {
+        "build": {
+          "builder": "@angular-builders/custom-webpack:browser",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "customWebpackConfig": {
+              "path": "./apps/profile/webpack.prod.config.js",
+              "mergeRules": {
+                "externals": "replace"
+              },
+              "port": 4201
+            },
+            "outputPath": "dist/apps/profile",
+            "index": "apps/profile/src/index.html",
+            "main": "apps/profile/src/main.ts",
+            "polyfills": "apps/profile/src/polyfills.ts",
+            "tsConfig": "apps/profile/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "apps/profile/src/favicon.ico",
+              "apps/profile/src/assets"
+            ],
+            "styles": ["apps/profile/src/styles.scss"],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "apps/profile/src/environments/environment.ts",
+                  "with": "apps/profile/src/environments/environment.prod.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-builders/custom-webpack:dev-server",
+          "options": {
+            "browserTarget": "profile:build",
+            "port": 4201
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "profile:build:production"
+            },
+            "development": {
+              "browserTarget": "profile:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "profile:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/profile/src/**/*.ts",
+              "apps/profile/src/**/*.html"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/profile"],
+          "options": {
+            "jestConfig": "apps/profile/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "tags": []
+    },
+    "profile-e2e": {
+      "root": "apps/profile-e2e",
+      "sourceRoot": "apps/profile-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/profile-e2e/cypress.json",
+            "devServerTarget": "profile:serve:development"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "profile:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["apps/profile-e2e/**/*.{js,ts}"]
+          }
+        }
+      },
+      "tags": [],
+      "implicitDependencies": ["profile"]
+    },
+    "sharedlib": {
+      "projectType": "library",
+      "root": "libs/sharedlib",
+      "sourceRoot": "libs/sharedlib/src",
+      "prefix": "myorg",
+      "architect": {
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/sharedlib"],
+          "options": {
+            "jestConfig": "libs/sharedlib/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/sharedlib/src/**/*.ts",
+              "libs/sharedlib/src/**/*.html"
+            ]
+          }
+        }
+      },
+      "tags": []
+    },
     "shellapp": {
       "projectType": "application",
       "root": "apps/shellapp",
@@ -8,9 +167,16 @@
       "prefix": "myorg",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "outputs": ["{options.outputPath}"],
           "options": {
+            "customWebpackConfig": {
+              "path": "./apps/shellapp/webpack.prod.config.js",
+              "mergeRules": {
+                "externals": "replace"
+              },
+              "port": 4200
+            },
             "outputPath": "dist/apps/shellapp",
             "index": "apps/shellapp/src/index.html",
             "main": "apps/shellapp/src/main.ts",
@@ -58,7 +224,7 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular-builders/custom-webpack:dev-server",
           "configurations": {
             "production": {
               "browserTarget": "shellapp:build:production"
